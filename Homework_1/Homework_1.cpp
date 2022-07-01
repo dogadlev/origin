@@ -3,61 +3,93 @@
 #include <iostream>
 #include <fstream>
 
+void readArray(std::ifstream &fileInput, int arrSize, int* arr)
+{
+    for (int i = 0; i < arrSize; ++i)
+    {
+        fileInput >> arr[i];
+    }
+}
+
+void mixArray(int arrSize, int* arr)
+{
+    if (arr[0] % 10 == 0)
+    {
+        int tmp = arr[0];
+
+        for (int i = arrSize - 1; i > 0; --i)
+        {
+            if (arr[i] > arr[i - 1])
+            {
+                tmp = arr[i - 1];
+                arr[i - 1] = arr[i];
+                arr[i] = tmp;
+            }
+        }
+    }
+    else
+    {
+        int tmp = arr[0];
+
+        for (int i = 0; i < arrSize; ++i)
+        {
+            if (arr[i] < arr[i + 1])
+            {
+                tmp = arr[i + 1];
+                arr[i + 1] = arr[i];
+                arr[i] = tmp;
+            }
+        }
+    }
+}
+
+void printArray(std::ofstream& fileOutput, int arrSize, int* arr)
+{
+        fileOutput << arrSize << std::endl;
+        for (int i = 0; i < arrSize; ++i)
+        {
+            fileOutput << arr[i] << " ";
+        }
+        fileOutput << std::endl;
+}
 
 int main(int argc, char** argv)
 {
     
     std::ifstream fileInput("in.txt");
 
-    if (fileInput.is_open()) //Check if a file exists
+    if (fileInput.is_open()) 
     {
-        int arrSizeN = 0, arrSizeM=0;
+        int arrSizeN = 0, arrSizeM = 0;
         
-        fileInput >> arrSizeN; //Read size of the N array from the in.txt 
+        fileInput >> arrSizeN;  
+        int* arrN = new int[arrSizeN]; 
+        readArray(fileInput, arrSizeN, arrN);
 
-        int* arrN = new int[arrSizeN]; //Allocate memory for array N
+        fileInput >> arrSizeM;  
+        int* arrM = new int[arrSizeM];
+        readArray(fileInput, arrSizeM, arrM);
 
-        for (int i = 0; i < arrSizeN; ++i) //Read data from the in.txt. Fill array N with values
-        {
-            fileInput >> arrN[i];
-        }
+        fileInput.close();
 
-        fileInput >> arrSizeM; //Read size of the M array from the in.txt
-
-        int* arrM = new int[arrSizeM]; //Allocate memory for array M
-
-        for (int i = 0; i < arrSizeM; ++i)
-        {
-            fileInput >> arrM[i];
-        }
-
-        fileInput.close(); //Close in.txt
+        mixArray(arrSizeN, arrN);
+        mixArray(arrSizeM, arrM);
 
         std::ofstream fileOutput("out.txt");
-
-        fileOutput << arrSizeM << std::endl; //Write data from the array M to the out.txt
-        fileOutput << arrM[arrSizeM - 1] << " ";
-        for (int i = 0; i < arrSizeM - 1; ++i)
-        {
-            fileOutput << arrM[i] << " ";
-        }
-        fileOutput << std::endl;
-
-        delete[] arrM; //Deallocate memory used for array M
-         
-        fileOutput << arrSizeN << std::endl; //Write data from the array N to the out.txt
-        for (int i = 1; i < arrSizeN; ++i)
-        {
-            fileOutput << arrN[i] << " ";
-        }
-        fileOutput << arrN[0];   
         
-        delete[] arrN; //Deallocate memory used for array N       
+        printArray(fileOutput, arrSizeM, arrM);
+        printArray(fileOutput, arrSizeN, arrN);
+
+        delete[] arrN;
+        delete[] arrM;
+
+        fileOutput.close();
+
+        return 0;
     }
     else 
     {
         std::cout << "File could not be found. Check the path.";
+        return 1;
     }
-
-    return 0;
 }
