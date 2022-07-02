@@ -3,17 +3,19 @@
 #include <iostream>
 #include <fstream>
 
-void readArray(std::ifstream &fileInput, int arrSize, int* arr)
+int* readArray(std::ifstream &fileInput, int arrSize, int* arr)
 {
     for (int i = 0; i < arrSize; ++i)
     {
         fileInput >> arr[i];
     }
+
+    return arr;
 }
 
-void mixArray(int arrSize, int* arr)
+void mixArray(int arrSize, int* arr, int* addressN, int* addressM)
 {
-    if (arr[0] % 10 == 0)
+    if (arr == addressM)
     {
         int tmp = arr[0];
 
@@ -27,7 +29,7 @@ void mixArray(int arrSize, int* arr)
             }
         }
     }
-    else
+    if (arr == addressN)
     {
         int tmp = arr[0];
 
@@ -55,8 +57,10 @@ void printArray(std::ofstream& fileOutput, int arrSize, int* arr)
 
 int main(int argc, char** argv)
 {
-    
     std::ifstream fileInput("in.txt");
+
+    int* addressN = nullptr;
+    int* addressM = nullptr;
 
     if (fileInput.is_open()) 
     {
@@ -64,16 +68,16 @@ int main(int argc, char** argv)
         
         fileInput >> arrSizeN;  
         int* arrN = new int[arrSizeN]; 
-        readArray(fileInput, arrSizeN, arrN);
+        addressN = readArray(fileInput, arrSizeN, arrN);
 
         fileInput >> arrSizeM;  
         int* arrM = new int[arrSizeM];
-        readArray(fileInput, arrSizeM, arrM);
+        addressM = readArray(fileInput, arrSizeM, arrM);
 
         fileInput.close();
 
-        mixArray(arrSizeN, arrN);
-        mixArray(arrSizeM, arrM);
+        mixArray(arrSizeN, arrN, addressN, addressM);
+        mixArray(arrSizeM, arrM, addressN, addressM);
 
         std::ofstream fileOutput("out.txt");
         
